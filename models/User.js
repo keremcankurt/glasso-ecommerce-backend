@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const slugify = require("slugify");
 
 const Schema = mongoose.Schema;
 
@@ -53,9 +52,9 @@ const UserSchema = new Schema({
       },
       name: String,
       price: Number,
+      brand: String,
       img: String,
       unit: Number,
-      seller: String,
       createdAt: {
         type: Date,
         default: Date.now,

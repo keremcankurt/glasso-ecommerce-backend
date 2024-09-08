@@ -66,7 +66,6 @@ const confirmAccount = (async (req, res, next) => {
     _id: id,
     isAccountConfirmed: true,
   });
-  console.log(registerUserToken);
   if (isUserActive) {
     return next(new CustomError("Hesabınız zaten aktif edildi.", 400));
   }

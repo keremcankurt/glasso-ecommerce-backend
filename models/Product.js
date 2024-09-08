@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const slugify = require("slugify");
 const Schema = mongoose.Schema;
 
 const ProductSchema = new Schema({
@@ -7,15 +6,10 @@ const ProductSchema = new Schema({
     type: String,
     required: [true, "Please provide a name"],
   },
-  img: {
+  images: [{
     type: String,
     default: ""
-  },
-  category: {
-    type: String,
-    required: true,
-    enum: ["Kadın Giyim", "Erkek Giyim", "Çocuk Giyim"],
-  },
+  }],
   price: {
     type: Number,
     required: true,
@@ -24,7 +18,7 @@ const ProductSchema = new Schema({
     type: Number,
     required: true,
   },
-  desc: {
+  brand: {
     type: String,
     required: true,
   },
