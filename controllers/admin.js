@@ -1,6 +1,7 @@
 const CustomError = require("../helpers/error/CustomError");
 const Ad = require("../models/Ad");
 const Product = require("../models/Product");
+const RecommendedProducts = require("../models/RecommendedProducts");
 
 const addProduct = (async (req, res, next) => {
   try {
@@ -223,6 +224,82 @@ const deleteProduct = (async (req, res, next) => {
   }
 
 
+  const addRecommendedProduct = async (req, res, next) => {
+    try {
+      const productId = req.params.id;
+      const product = await Product.findById(productId);
+      if (!product) {
+        return next(
+          new CustomError(
+            "Ürün bulunamadı.",
+            400
+          )
+        );
+      }
+  
+      let recommendedProducts = await RecommendedProducts.findOne();
+      if (!recommendedProducts) {
+        recommendedProducts = new RecommendedProducts();
+      }
+  
+      if (!recommendedProducts.products.includes(productId)) {
+        recommendedProducts.products.push(productId);
+        await recommendedProducts.save();
+        
+        // Ekleme işlemi tamamlandıktan sonra güncellenmiş recommendedProducts'ı döndür
+        res.status(200).json({
+          message: "Ürün tavsiyelere eklendi",
+          recommendedProducts // Güncellenmiş ürün listesini yanıt olarak döndür
+        });
+      } else {
+        return next(
+          new CustomError(
+            "Ürün zaten tavsiye edilenler arasında",
+            400
+          )
+        );
+      }
+    } catch (error) {
+      return next(error);
+    }
+  };
+  const removeRecommendedProduct = async (req, res, next) => {
+    try {
+      const productId = req.params.id;
+      
+      let recommendedProducts = await RecommendedProducts.findOne();
+      if (!recommendedProducts) {
+        return next(
+          new CustomError(
+            "Tavsiye edilen ürünler bulunamadı.",
+            400
+          )
+        );
+      }
+  
+      const productIndex = recommendedProducts.products.indexOf(productId);
+      if (productIndex > -1) {
+        // Ürün listede varsa çıkar
+        recommendedProducts.products.splice(productIndex, 1);
+        await recommendedProducts.save();
+        
+        // Güncellenmiş recommendedProducts'ı döndür
+        res.status(200).json({
+          message: "Ürün tavsiyelerden silindi",
+        });
+      } else {
+        return next(
+          new CustomError(
+            "Ürün zaten tavsiye edilenler arasında değil",
+            400
+          )
+        );
+      }
+    } catch (error) {
+      return next(error);
+    }
+  };
+  
 
 module.exports = {
     banners, 
@@ -233,6 +310,8 @@ module.exports = {
     updateProduct,
     promotionalMessages,
     addPromotionalMessage,
+    addRecommendedProduct,
+    removeRecommendedProduct,
     deletePromotionalMessage,
   };
   

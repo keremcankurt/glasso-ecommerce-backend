@@ -4,15 +4,17 @@ const {
     getAdminAccess,
   } = require("../middlewares/authorization/auth");
 const { 
-  addProduct, 
-  addPromotionalMessage, 
-  addBanner, 
-  deletePromotionalMessage, 
-  deleteBanner, 
   banners, 
-  promotionalMessages, 
+  addBanner, 
+  addProduct, 
+  deleteBanner, 
+  updateProduct,
   deleteProduct,
-  updateProduct
+  promotionalMessages, 
+  addRecommendedProduct,
+  addPromotionalMessage, 
+  deletePromotionalMessage,
+  removeRecommendedProduct, 
  } = require("../controllers/admin");
 // const imageUpload = require("../middlewares/libraries/imageUpload");
 
@@ -22,6 +24,9 @@ const {
   router.post("/add-product", addProduct);
   router.delete("/delete-product/:id", deleteProduct);
   router.put("/update-product/:id", updateProduct);
+  
+  router.post("/add-recommended-product/:id", addRecommendedProduct);
+  router.delete("/delete-recommended-product/:id", removeRecommendedProduct);
 
   router.get("/get-messages", promotionalMessages)
   router.post("/add-promotional-message", addPromotionalMessage);
