@@ -3,20 +3,21 @@ const Ad = require("../models/Ad");
 const Product = require("../models/Product");
 const RecommendedProducts = require("../models/RecommendedProducts");
 
-const addProduct = (async (req, res, next) => {
+const addProduct = async (req, res, next) => {
   try {
-    const information = req.body
-    await Product.create(
-      information
-    )
+    const information = req.body;
 
-    res.status(201).json({message: "Yeni ürün ekleme işlemi başarılı"})
+    const product = await Product.create(information);
+
+    res.status(201).json({
+      message: "Yeni ürün ekleme işlemi başarılı",
+      product: product
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
+};
 
-
-  });
   const updateProduct = async (req, res, next) => {
     try {
       const information = req.body;
@@ -47,25 +48,6 @@ const deleteProduct = (async (req, res, next) => {
 
 
   });
-
-  const promotionalMessages = async (req, res, next) => {
-    try {
-      const ad = await Ad.findOne();
-  
-      if (!ad || ad.messages.length === 0) {
-        return res.status(200).json([]);
-      }
-  
-      res.status(200).json(ad.messages);
-    } catch (err) {
-      return next(
-        new CustomError(
-          "Mesajlar getirilirken hata oluştu.",
-          500
-        ))
-      
-    }
-  }
 
   const addPromotionalMessage = async (req, res, next) => {
     try {
@@ -131,24 +113,6 @@ const deleteProduct = (async (req, res, next) => {
       return next(
         new CustomError(
           "Mesaj silinirken hata oluştu.",
-          500
-        ))
-    }
-  }
-
-  const banners = async (req, res, next) => {
-    try {
-      const ad = await Ad.findOne();
-  
-      if (!ad || ad.images.length === 0) {
-        return res.status(200).json([]);
-      }
-  
-      res.status(200).json(ad.images);
-    } catch (err) {
-      return next(
-        new CustomError(
-          "Bannerlar getirilirken hata oluştu.",
           500
         ))
     }
@@ -246,10 +210,8 @@ const deleteProduct = (async (req, res, next) => {
         recommendedProducts.products.push(productId);
         await recommendedProducts.save();
         
-        // Ekleme işlemi tamamlandıktan sonra güncellenmiş recommendedProducts'ı döndür
         res.status(200).json({
           message: "Ürün tavsiyelere eklendi",
-          recommendedProducts // Güncellenmiş ürün listesini yanıt olarak döndür
         });
       } else {
         return next(
@@ -279,11 +241,9 @@ const deleteProduct = (async (req, res, next) => {
   
       const productIndex = recommendedProducts.products.indexOf(productId);
       if (productIndex > -1) {
-        // Ürün listede varsa çıkar
         recommendedProducts.products.splice(productIndex, 1);
         await recommendedProducts.save();
         
-        // Güncellenmiş recommendedProducts'ı döndür
         res.status(200).json({
           message: "Ürün tavsiyelerden silindi",
         });
@@ -299,16 +259,47 @@ const deleteProduct = (async (req, res, next) => {
       return next(error);
     }
   };
+
+  const updateCampaign =  async (req, res) => {
+    const { productIds, endDate, discountPercentage } = req.body; 
+  
+    try {
+      const updatePromises = productIds.map(async (productId) => {
+        return Product.findByIdAndUpdate(
+          productId,
+          {
+            $set: {
+              'campaign.endDate': endDate,
+              'campaign.discountPercentage': discountPercentage,
+            },
+          },
+          { new: true, runValidators: true } 
+        );
+      });
+  
+      await Promise.all(updatePromises);
+  
+      res.status(200).json({
+        message: 'Kampanya oluşturuldu.',
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        success: false,
+        message: 'Kampanya güncellenirken bir hata oluştu.',
+        error: error.message,
+      });
+    }
+  }
   
 
 module.exports = {
-    banners, 
     addBanner,
     addProduct,
     deleteBanner,
     deleteProduct,
     updateProduct,
-    promotionalMessages,
+    updateCampaign,
     addPromotionalMessage,
     addRecommendedProduct,
     removeRecommendedProduct,

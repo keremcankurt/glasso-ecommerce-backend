@@ -4,17 +4,16 @@ const {
     getAdminAccess,
   } = require("../middlewares/authorization/auth");
 const { 
-  banners, 
   addBanner, 
   addProduct, 
   deleteBanner, 
   updateProduct,
-  deleteProduct,
-  promotionalMessages, 
+  deleteProduct, 
   addRecommendedProduct,
   addPromotionalMessage, 
   deletePromotionalMessage,
-  removeRecommendedProduct, 
+  removeRecommendedProduct,
+  updateCampaign, 
  } = require("../controllers/admin");
 // const imageUpload = require("../middlewares/libraries/imageUpload");
 
@@ -27,13 +26,14 @@ const {
   
   router.post("/add-recommended-product/:id", addRecommendedProduct);
   router.delete("/delete-recommended-product/:id", removeRecommendedProduct);
-
-  router.get("/get-messages", promotionalMessages)
+  
+  
   router.post("/add-promotional-message", addPromotionalMessage);
   router.delete("/delete-promotional-message/:id", deletePromotionalMessage);
-
-  router.get("/get-banners",banners)
+  
   router.post("/add-banner", addBanner);
   router.delete("/delete-banner/:id", deleteBanner);
+  
+  router.put("/update-campaign", updateCampaign);
 
   module.exports = router;

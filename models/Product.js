@@ -37,6 +37,10 @@ const ProductSchema = new Schema({
   star: {
     type: Number,
   },
+  campaign: {
+    endDate: Date,
+    discountPercentage: Number,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
