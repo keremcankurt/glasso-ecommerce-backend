@@ -1,4 +1,5 @@
 const CustomError = require("../../helpers/error/CustomError");
+const Product = require("../../models/Product");
 const User = require("../../models/User");
 
 const checkUserExists = (async (req, res, next) => {
@@ -32,8 +33,17 @@ const checkEmailExists = (async (req, res, next) => {
   next();
 });
 
+const checkProductExist = (async (req, res, next) => {
+  const id = req.params.productId;
+  const product = await Product.findById(id);
+  if (!product) {
+    return next(new CustomError("Ürün bulunamadı.", 400));
+  }
+  next();
+});
 module.exports = {
   checkUserExists,
   checkEmailExists,
   checkIsUserConfirmed,
+  checkProductExist,
 };

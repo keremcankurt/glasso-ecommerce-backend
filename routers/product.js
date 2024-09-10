@@ -9,4 +9,5 @@ const { products, promotionalMessages, banners, recommendedProducts } = require(
   router.get("/banners",banners)
 
   router.get("/recommended-products",recommendedProducts)
+  
   module.exports = router;
