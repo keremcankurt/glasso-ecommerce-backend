@@ -65,7 +65,38 @@ const getProfile = (async (req, res, next) => {
     }
   });
  
+const getCart = async (req, res, next) => {
+  try {
+    const cartItems = req.body;
+    const selectedProducts = [];
+
+    for (const item of cartItems) {
+      const productId = Object.keys(item)[0];
+      const quantity = item[productId];
+      const product = await Product.findById(productId);
+
+      if (!product) {
+        continue;
+      }
+
+      if (product.stock === 0) {
+        continue;
+      }
+
+      const selectedProduct = {
+        ...product.toObject(),
+        quantity: product.stock < quantity ? product.stock : quantity
+      };
+
+      selectedProducts.push(selectedProduct);
+    }
+    res.json(selectedProducts);
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
     getProfile,
-    favProduct
+    favProduct,
+    getCart
 }
