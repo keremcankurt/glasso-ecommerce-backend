@@ -16,29 +16,13 @@ connectDatabase();
 //App Started
 const app = express();
 app.use(express.static('public'));
-app.use(function(req, res, next) {
-  const allowedOrigins = [
-    "http://192.168.1.109:3000", 
-    "http://localhost:3000", 
-    "http://127.0.0.1:3000"
-  ];
-  
-  const origin = req.headers.origin;
-  
-  if (allowedOrigins.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin);
-  }
-  
-  res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  res.header("Access-Control-Allow-Credentials", "true");
-  
-  if (req.method === "OPTIONS") {
-    res.sendStatus(200);
-  } else {
-    next();
-  }
-});
+app.use(cors({
+  origin: 'https://dsk-ticaret.netlify.app/', // İzin verilen kök URL
+  methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'], // İzin verilen HTTP metodları
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'], // İzin verilen başlıklar
+  credentials: true, // Kimlik doğrulama bilgilerini (örneğin, çerezler) paylaşma izni
+  exposedHeaders: ['Authorization'] // İzin verilen gösterilen başlık (opsiyonel)
+}));
 
 app.use(express.json({ limit: '10mb' })); 
 app.use(express.urlencoded({ limit: '10mb', extended: true })); 

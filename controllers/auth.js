@@ -61,7 +61,8 @@ const register = (async (req, res, next) => {
 });
 
 const confirmAccount = (async (req, res, next) => {
-  const { registerUserToken, id } = req.query;
+  try {
+    const { registerUserToken, id } = req.query;
   const isUserActive = await User.findOne({
     _id: id,
     isAccountConfirmed: true,
@@ -95,6 +96,10 @@ const confirmAccount = (async (req, res, next) => {
   return res.status(200).json({
     message: "Hesabınız Başarıyla Onaylandı.",
   });
+  } catch (error) {
+    next(error)
+  }
+  
 });
 
 const login = (async (req, res, next) => {
@@ -110,29 +115,30 @@ const login = (async (req, res, next) => {
   sendJwtToClient(user, res);
 });
 
-const logout = (async (req, res, next) => {
-  const { NODE_ENV } = process.env;
+const logout = async (req, res, next) => {
+  res.clearCookie("access_token");
   return res
     .status(200)
-    .cookie({
+    .clearCookie('access_token', {
       httpOnly: true,
-      expires: new Date(Date.now()),
-      secure: NODE_ENV === "development" ? false : true,
+      secure: true, // sadece HTTPS üzerinden gönderilmesi için
+      sameSite: 'none', // üçüncü taraf isteklerde bile cookie'nin gönderilmesini sağlar
+      path: '/' // cookie'nin kök dizinde tanımlı olduğundan emin olun
     })
     .json({
-      message: "Logged out successfully",
+      message: 'Logged out successfully',
     });
-});
+};
+
 
 const forgotPassword = (async (req, res, next) => {
   const email = req.body.email;
-  console.log(email)
   const user = await User.findOne({
     email,
   });
   const forgotPasswordToken = user.getTempTokenFromUser();
 
-  const forgotPasswordUrl = `http://localhost:3000/forgotpassword/change/?forgotPasswordToken=${forgotPasswordToken}`; //değiştirilecek
+  const forgotPasswordUrl = `http://192.168.1.109:3000/forgot-password/change/?forgotPasswordToken=${forgotPasswordToken}`; //değiştirilecek
   const emailTemplate = `
         <h3>Forgot Password</h3>
         <p>This <a href= '${forgotPasswordUrl}' target = '_blank'>link</a>will expire in 1 hour</p>
@@ -150,31 +156,34 @@ const forgotPassword = (async (req, res, next) => {
       message: "Email was sent successfully"
     });
   } catch (err) {
-    return next(new CustomError("Email Could Not Be Sent", 500));
+    next(err)
   }
 });
 
 const changePassword = (async (req, res, next) => {
-  const { forgotPasswordToken } = req.query;
-  const { password } = req.body;
-  if (!forgotPasswordToken) {
-    return next(new CustomError("Please provide a valid token.", 403));
+  try {
+    const { password, token } = req.body;
+    if (!token) {
+      return next(new CustomError("Please provide a valid token.", 403));
+    }
+    const user = await User.findOne({
+      tempToken: token,
+      tempTokenExpire: { $gt: Date.now() },
+    });
+    if (!user) {
+      return next(new CustomError("Invalid Token or Session Expired", 404));
+    }
+    user.tempToken = undefined;
+    user.tempTokenExpire = undefined;
+    user.password = password;
+    await user.save();
+  
+    res.status(200).json({
+      message: 'Your password has been changed successfully'
+    });
+  } catch (error) {
+    next(error)
   }
-  const user = await User.findOne({
-    tempToken: forgotPasswordToken,
-    tempTokenExpire: { $gt: Date.now() },
-  });
-  if (!user) {
-    return next(new CustomError("Invalid Token or Session Expired", 404));
-  }
-  user.tempToken = undefined;
-  user.tempTokenExpire = undefined;
-  user.password = password;
-  await user.save();
-
-  res.status(200).json({
-    message: 'Your password has been changed successfully'
-  });
 });
 
 
