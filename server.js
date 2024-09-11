@@ -17,7 +17,7 @@ connectDatabase();
 const app = express();
 app.use(express.static('public'));
 app.use(cors({
-  origin: 'https://dsk-ticaret.netlify.app/', // İzin verilen kök URL
+  origin: 'https://dsk-ticaret.netlify.app', // İzin verilen kök URL
   methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'], // İzin verilen HTTP metodları
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'], // İzin verilen başlıklar
   credentials: true, // Kimlik doğrulama bilgilerini (örneğin, çerezler) paylaşma izni
