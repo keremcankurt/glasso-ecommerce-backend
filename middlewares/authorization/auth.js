@@ -17,7 +17,8 @@ const getAccessToRoute = async (req,res,next) => {
             id: decoded.id,
             name: decoded.name,
             surname: decoded.surname,
-            role: decoded.role
+            role: decoded.role,
+            email: decoded.email
         }
         next();
     });

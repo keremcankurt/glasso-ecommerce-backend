@@ -13,7 +13,7 @@ const sendJwtToClient = (user, res) => {
         name: user.name,
         surname: user.surname,
         role: user.role,
-        
+        email: user.email,
       })
   };
   
