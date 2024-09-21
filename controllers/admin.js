@@ -1,7 +1,9 @@
 const CustomError = require("../helpers/error/CustomError");
 const Ad = require("../models/Ad");
+const Order = require("../models/Order");
 const Product = require("../models/Product");
 const RecommendedProducts = require("../models/RecommendedProducts");
+const User = require("../models/User");
 
 const addProduct = async (req, res, next) => {
   try {
@@ -73,7 +75,6 @@ const deleteProduct = (async (req, res, next) => {
   
       res.status(201).json({ message: "Mesaj başarıyla eklendi.", messages: ad.messages });
     } catch (err) {
-      console.log(err)
       return next(
         new CustomError(
           "Mesaj eklenirken hata oluştu.",
@@ -291,6 +292,93 @@ const deleteProduct = (async (req, res, next) => {
       });
     }
   }
+  const getDashboardDatas = async (req, res, next) => {
+    try {
+      const [orders, userCount, preparingOrdersCount, deliveriedOrdersCount, totalRevenue] = await Promise.all([
+        (await Order.find()).reverse(),
+        User.countDocuments(),
+        Order.countDocuments({ status: "Sipariş Hazırlanıyor" }),
+        Order.countDocuments({ status: "Teslim Edildi" }),
+        Order.aggregate([
+          {
+            $match: {
+              status: { $nin: ["Ödeme Beklemede", "Ödeme Başarısız"] } // Bu statüleri hariç tutar
+            }
+          },
+          {
+            $group: {
+              _id: null,
+              total: { $sum: "$price" } // Price alanını toplar
+            }
+          }
+        ])
+      ]);
+  
+      const revenue = totalRevenue.length > 0 ? totalRevenue[0].total : 0; // Sonuç olup olmadığını kontrol eder
+  
+      res.status(200).json({
+        orders,
+        userCount,
+        preparingOrdersCount,
+        deliveriedOrdersCount,
+        totalRevenue: revenue // Toplam kazanç
+      });
+    
+    } catch (error) {
+      next(error); 
+    }
+  };
+
+  const deliverOrder = async (req, res,next) => {
+    try {
+      const orderId = req.params.orderId
+      const order = await Order.findById(orderId);
+      if (order) {
+        order.status = "Teslim Edildi";
+        await order.save();
+        res.status(200).json({message: "Sipariş başarıyla teslim edildi."})
+      } else {
+        return next(
+          new CustomError(
+            "Sipariş bulunamadı.",
+            400
+          )
+        );
+      }
+    } catch (error) {
+      next(error)
+    }
+  };
+
+  const shipOrder = async (req, res, next) => {
+    try {
+      const { shippingCompany, trackingNumber, orderId } = req.body;
+  
+      const order = await Order.findById(orderId);
+      if (order) {
+        // Siparişin durumunu güncelle
+        order.status = "Kargoya Verildi";
+        // Kargo bilgilerini siparişe ekle
+        order.cargo = {
+          shippingCompany,
+          trackingNumber
+        };
+        await order.save();
+  
+        res.status(200).json({
+          message: "Sipariş başarıyla kargoya verildi.",
+        });
+      } else {
+        return next(new CustomError("Sipariş bulunamadı.", 400));
+      }
+    } catch (error) {
+      next(error);
+    }
+  };
+  
+  
+  
+  
   
 
 module.exports = {
@@ -304,5 +392,8 @@ module.exports = {
     addRecommendedProduct,
     removeRecommendedProduct,
     deletePromotionalMessage,
+    getDashboardDatas,
+    shipOrder,
+    deliverOrder
   };
   

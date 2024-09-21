@@ -13,7 +13,10 @@ const {
   addPromotionalMessage, 
   deletePromotionalMessage,
   removeRecommendedProduct,
-  updateCampaign, 
+  updateCampaign,
+  getDashboardDatas,
+  deliverOrder,
+  shipOrder, 
  } = require("../controllers/admin");
 // const imageUpload = require("../middlewares/libraries/imageUpload");
 
@@ -35,5 +38,10 @@ const {
   router.delete("/delete-banner/:id", deleteBanner);
   
   router.put("/update-campaign", updateCampaign);
+
+  router.get("/dashboard", getDashboardDatas)
+
+  router.put("/deliver-order/:orderId", deliverOrder)
+  router.put("/ship-order", shipOrder)
 
   module.exports = router;

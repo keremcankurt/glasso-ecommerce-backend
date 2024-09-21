@@ -37,7 +37,7 @@ const register = (async (req, res, next) => {
   });
   const registerUserToken = user.getTempTokenFromUser();
 
-  const confirmAccountUrl = `http://localhost:3000/confirmaccount/?registerUserToken=${registerUserToken}&id=${user._id}`; //değiştirilecek
+  const confirmAccountUrl = `${process.env.CLIENT_URL}/confirmaccount/?registerUserToken=${registerUserToken}&id=${user._id}`; //değiştirilecek
   const emailTemplate = `
         <h3>Confirm Your Account</h3>
         <p>This <a href= '${confirmAccountUrl}' target = '_blank'>link</a>will expire in 1 hour</p>
@@ -83,7 +83,6 @@ const confirmAccount = (async (req, res, next) => {
     const user = await User.findOne({
       tempToken: registerUserToken,
     });
-    console.log(user)
     if (user) {
       await user.remove();
     }
@@ -138,7 +137,7 @@ const forgotPassword = (async (req, res, next) => {
   });
   const forgotPasswordToken = user.getTempTokenFromUser();
 
-  const forgotPasswordUrl = `http://192.168.1.109:3000/forgot-password/change/?forgotPasswordToken=${forgotPasswordToken}`; //değiştirilecek
+  const forgotPasswordUrl = `${process.env.CLIENT_URL}/forgot-password/change/?forgotPasswordToken=${forgotPasswordToken}`; //değiştirilecek
   const emailTemplate = `
         <h3>Forgot Password</h3>
         <p>This <a href= '${forgotPasswordUrl}' target = '_blank'>link</a>will expire in 1 hour</p>
