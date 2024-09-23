@@ -39,9 +39,22 @@ const register = (async (req, res, next) => {
 
   const confirmAccountUrl = `${process.env.CLIENT_URL}/confirmaccount/?registerUserToken=${registerUserToken}&id=${user._id}`; //değiştirilecek
   const emailTemplate = `
-        <h3>Confirm Your Account</h3>
-        <p>This <a href= '${confirmAccountUrl}' target = '_blank'>link</a>will expire in 1 hour</p>
-    `;
+  <div style="font-family: Arial, sans-serif; color: #333;">
+      <h3 style="color: #007bff;">Glasso Hesap Onayı</h3>
+      <p>Merhaba,</p>
+      <p>Hesabınızı oluşturduğunuz için teşekkür ederiz! Gözlük koleksiyonumuzu keşfetmek için hazırsınız.</p>
+      <p>Hesabınızı onaylamak için lütfen aşağıdaki bağlantıya tıklayın:</p>
+      <p>
+          <a href='${confirmAccountUrl}' target='_blank' style="color: #fff; background-color: #007bff; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+              Hesabınızı Onaylayın
+          </a>
+      </p>
+      <p style="font-size: 0.9em; color: #777;">Bu bağlantı 1 saat içinde geçerliliğini yitirecektir.</p>
+      <p>Keyifli alışverişler dileriz!</p>
+      <p>Sevgiyle,<br>Glasso Ekibi</p>
+  </div>
+`;
+
 
   try {
     
@@ -139,9 +152,21 @@ const forgotPassword = (async (req, res, next) => {
 
   const forgotPasswordUrl = `${process.env.CLIENT_URL}/forgot-password/change/?forgotPasswordToken=${forgotPasswordToken}`; //değiştirilecek
   const emailTemplate = `
-        <h3>Forgot Password</h3>
-        <p>This <a href= '${forgotPasswordUrl}' target = '_blank'>link</a>will expire in 1 hour</p>
-    `;
+  <div style="font-family: Arial, sans-serif; color: #333;">
+      <h3 style="color: #007bff;">Şifremi Unuttum</h3>
+      <p>Merhaba,</p>
+      <p>Şifrenizi sıfırlamak için aşağıdaki bağlantıya tıklayın:</p>
+      <p>
+          <a href='${forgotPasswordUrl}' target='_blank' style="color: #fff; background-color: #007bff; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+              Şifrenizi Sıfırlayın
+          </a>
+      </p>
+      <p style="font-size: 0.9em; color: #777;">Bu bağlantı 1 saat içinde geçerliliğini yitirecektir.</p>
+      <p>Keyifli alışverişler dileriz!</p>
+      <p>Sevgiyle,<br>Glasso Ekibi</p>
+  </div>
+`;
+
 
   try {
     await user.save();

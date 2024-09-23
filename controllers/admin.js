@@ -295,7 +295,7 @@ const deleteProduct = (async (req, res, next) => {
   const getDashboardDatas = async (req, res, next) => {
     try {
       const [orders, userCount, preparingOrdersCount, deliveriedOrdersCount, totalRevenue] = await Promise.all([
-        (await Order.find()).reverse(),
+        (await Order.find().sort({createdAt: -1})),
         User.countDocuments(),
         Order.countDocuments({ status: "Sipariş Hazırlanıyor" }),
         Order.countDocuments({ status: "Teslim Edildi" }),

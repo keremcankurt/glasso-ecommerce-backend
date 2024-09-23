@@ -283,12 +283,12 @@ const paymentCallback = async (req, res, next) => {
           await Product.findByIdAndUpdate(product.id, { $inc: { stock: -product.quantity } });
         }
 
-        return res.redirect(`${process.env.CLIENT_URL}/order?status=SUCCESS`);
+        return res.redirect(`${process.env.CLIENT_URL}/cart?status=SUCCESS`);
       } else {
         order.status = "Ödeme Başarısız";
         await order.save();
 
-        return res.redirect(`${process.env.CLIENT_URL}/order?status=FAILURE`);
+        return res.redirect(`${process.env.CLIENT_URL}/cart?status=FAILURE`);
       }
     });
   } catch (error) {

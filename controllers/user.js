@@ -1,3 +1,4 @@
+const Order = require("../models/Order");
 const Product = require("../models/Product");
 const User = require("../models/User");
 
@@ -95,8 +96,23 @@ const getCart = async (req, res, next) => {
     next(error);
   }
 };
+
+const getOrders = async (req, res, next) => {
+  try {
+    const orders = await Order.find({
+      userId: req.user.id,
+      status: { $nin: ["Ödeme Beklemede", "Ödeme Başarısız"] }
+    }).sort({ createdAt: -1 });
+
+    return res.status(200).json(orders);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
     getProfile,
     favProduct,
-    getCart
+    getCart,
+    getOrders
 }
