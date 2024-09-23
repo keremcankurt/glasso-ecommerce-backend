@@ -86,24 +86,25 @@ Bu proje, gözlük satış işlemlerini yönetmek için bir backend API'si oluş
 - **POST /api/payment/paymentIyzico**: Ödeme işlemini Iyzico üzerinden gerçekleştirir
 - **POST /api/payment/paymentCallback**: Ödeme işleminin sonucunu döndürür
 
-  ### Admin
 
-  - **POST /api/admin/add-product**: Ürün ekleme işlemi
-  - **DELETE /api/admin/delete-product/:id**: Ürin silme işlemi
-  - **PUT /api/admin/update-product/:id**: Ürün güncelleme işlemi
+### Admin
+
+- **POST /api/admin/add-product**: Ürün ekleme işlemi
+- **DELETE /api/admin/delete-product/:id**: Ürin silme işlemi
+- **PUT /api/admin/update-product/:id**: Ürün güncelleme işlemi
  
-  - **POST /api/admin/add-recommended-product/:id**: Ürünü önerilenlere ekler
-  - **DELETE /api/admin/delete-recommended-product/:id**: Ürünü önerilenlerden çıkartır
+- **POST /api/admin/add-recommended-product/:id**: Ürünü önerilenlere ekler
+- **DELETE /api/admin/delete-recommended-product/:id**: Ürünü önerilenlerden çıkartır
  
-  - **POST /api/admin/add-promotional-message**: Promosyon mesajı ekler
-  - **DELETE /api/admin/delete-promotional-message/:id**: Promosyon mesajı kaldırır
+- **POST /api/admin/add-promotional-message**: Promosyon mesajı ekler
+- **DELETE /api/admin/delete-promotional-message/:id**: Promosyon mesajı kaldırır
     
-  - **POST /api/admin/add-banner**: Banner reklam ekler
-  - **DELETE /api/admin/delete-banner/:id**: Banner reklam kaldırır
+- **POST /api/admin/add-banner**: Banner reklam ekler
+- **DELETE /api/admin/delete-banner/:id**: Banner reklam kaldırır
  
-  - **PUT /api/admin/update-campaign**: Kampanya başlatır
+- **PUT /api/admin/update-campaign**: Kampanya başlatır
  
-  - **GET /api/admin/dashboard**: Admin dasboard verilerini döndürür
+- **GET /api/admin/dashboard**: Admin dasboard verilerini döndürür
     
-  - **PUT /api/admin/deliver-order/:orderId**: Siparişi teslim durumuna alır
-  - **PUT /api/admin/ship-order**: Siparişi kargoya verildi durumuna alır
+- **PUT /api/admin/deliver-order/:orderId**: Siparişi teslim durumuna alır
+- **PUT /api/admin/ship-order**: Siparişi kargoya verildi durumuna alır
