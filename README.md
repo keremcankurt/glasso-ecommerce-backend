@@ -17,8 +17,8 @@ Bu proje, gözlük satış işlemlerini yönetmek için bir backend API'si oluş
 
 1. Bu repoyu klonlayın:
    ```bash
-   git clone https://github.com/kullaniciadi/goruk-satis-sitesi-backend.git
-   cd goruk-satis-sitesi-backend
+   git clone https://github.com/keremcankurt/glasso-ecommerce-backend.git
+   cd glasso-ecommerce-backend
 
 2. Bağımlılıkları yükleyin:
    ```bash
